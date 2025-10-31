@@ -1,0 +1,9 @@
+{
+    "vscode-serial-monitor.dataBits": 8,
+    "vscode-serial-monitor.lineEnding": "none",
+    "vscode-serial-monitor.parity": "none",
+    "vscode-serial-monitor.stopBits": 1,
+    "files.associations": {
+        "random": "c"
+    }
+}
