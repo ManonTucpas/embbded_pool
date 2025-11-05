@@ -1,4 +1,11 @@
-#include "../include/hexa.h"
+#include "../include/hex.h"
+
+uint8_t is_hex(char c)
+{
+    return (c >= '0' && c <= '9') ||
+           (c >= 'A' && c <= 'F') ||
+           (c >= 'a' && c <= 'f');
+}
 
 uint8_t hex_to_n(char c)
 {
@@ -13,7 +20,7 @@ uint8_t hex_to_n(char c)
 
 uint8_t pair_to_byte(char a, char b)
 {
-    // 4 bits de poids faible da a vers les 4 bits de poids fort de l'octet
+    // 4 bits de poids faible de a vers les 4 bits de poids fort de l'octet
     // 4 bits de b dans les 4 bits de poids faible de l'octet
     // hex_to_n('F') << 4   = 0b11110000
     // hex_to_n('F')        = 0b00001111

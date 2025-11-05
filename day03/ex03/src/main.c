@@ -4,61 +4,72 @@
 
 #include "../include/rgb.h"
 #include "../include/uart.h"
-#include "../include/hexa.h"
+#include "../include/hex.h"
 
 #define LED_R PD5
 #define LED_B PD3
 #define LED_G PD6
 
-// Variables globales
-volatile char buffer[6];
-volatile uint8_t idx = 0;
-enum
-{
-    WAIT_HASH,
-    READ_HEX
-} state = WAIT_HASH;
+#define BUF_LEN 7
+char buf[BUF_LEN];
+uint8_t pos = 0;
+volatile char c;
 
 void setup()
 {
     // Setup LEDs as Output
     DDRD |= (1 << LED_B) | (1 << LED_G) | (1 << LED_R);
+    init_rgb();
+    uart_init();
 }
 
 // ISR : Interrupt Service Routine
 //  p.74 table 12-6
 ISR(USART_RX_vect)
 {
-    char c = UDR0; // lire vite le registre
+    c = UDR0;
 
-    if (state == WAIT_HASH) // on attend de tomber sur '#'
-    {
-        if (c == '#')
+    UDR0 = c;
+
+    if (c == '\r')
+        UDR0 = '\n';
+
+    if (c == '\r')
+    { // screen envoie \r
+        if (pos == 7 && buf[0] == '#')
         {
-            idx = 0;
-            state = READ_HEX;
+
+            // Verif if hexa valeur
+            for (int i = 1; i <= 6; i++)
+            {
+                if (!is_hex(buf[i]))
+                {
+                    pos = 0;
+                    return;
+                }
+            }
+            uint8_t r = pair_to_byte(buf[1], buf[2]);
+            uint8_t g = pair_to_byte(buf[3], buf[4]);
+            uint8_t b = pair_to_byte(buf[5], buf[6]);
+            set_rgb(r, g, b);
         }
+        pos = 0;
         return;
     }
-    buffer[idx++] = c; // on rempli le buffer
 
-    if (idx == 6)
+    if (pos < BUF_LEN)
     {
-        uint8_t R = pair_to_byte(buffer[0], buffer[1]);
-        uint8_t G = pair_to_byte(buffer[2], buffer[3]);
-        uint8_t B = pair_to_byte(buffer[4], buffer[5]);
-        set_rgb(R, G, B);
-        state = WAIT_HASH;
-
+        buf[pos++] = c;
     }
+    else
+        pos = 0;
 }
 
 int main()
 {
     setup();
-    init_rgb();
-    uart_init();
     sei();
+
     while (1)
     {
     }

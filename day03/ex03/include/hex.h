@@ -1,8 +1,9 @@
-#ifndef _HEXA_
-# define _HEXA_
+#ifndef _HEX_
+# define _HEX_
 
 #include <avr/io.h>
 
+uint8_t is_hex(char c);
 
 uint8_t hex_to_n(char c);
 

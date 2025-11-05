@@ -24,9 +24,7 @@ CFLAGS = -mmcu=$(MCU) -Os -DF_CPU=$(F_CPU) -Wall
 TARGET = main
 SRC =\
 	src/main.c \
-	src/rgb.c \
 	src/uart.c \
-	src/hex.c
 
 all: hex flash
 
@@ -50,4 +48,4 @@ flash: $(TARGET).hex
 clean:
 	rm -f $(TARGET).hex $(TARGET).bin
 
-.PHONY: hex flash clean all
+.PHONY: all hex flash clean

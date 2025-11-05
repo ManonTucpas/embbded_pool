@@ -13,11 +13,11 @@ void uart_init()
     UCSR0C = ((1 << UCSZ00) | (1 << UCSZ01));
 
 }
-// Write a char the serial port
+// // Write a char the serial port
 void uart_tx(char c)
 {
     // Attend que le buffer de transmission soit vide
-    while (!(UCSR0A & (1 << UDRE0)));
+    while (!(UCSR0A & (1 << UDRE0)))
     UDR0 = c;
 }
 
@@ -29,5 +29,15 @@ char uart_rx(void)
     /* Get and return received data from buffer */
     return UDR0;
 }
+
+void uart_printstr(const char *str)
+{
+    while (*str != 0x00)
+    {
+        uart_tx(*str);
+        str++;
+    }
+}
+
 
 
